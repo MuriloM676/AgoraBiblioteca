@@ -129,7 +129,8 @@ class Emprestimo extends Model
             return 0;
         }
 
-        return now()->diffInDays($this->data_devolucao_prevista);
+        // Garantir valor positivo de dias de atraso
+        return $this->data_devolucao_prevista->diffInDays(now());
     }
 
     public function calcularMulta(): float

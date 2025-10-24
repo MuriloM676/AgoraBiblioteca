@@ -172,11 +172,12 @@ class Livro extends Model
     public function generateQrCode(): void
     {
         $url = route('livros.show', $this->id);
-        $qrCode = QrCode::format('png')
+        // Usamos SVG para evitar dependência do Imagick/GD na geração de PNG
+        $qrCode = QrCode::format('svg')
                         ->size(300)
                         ->generate($url);
 
-        $path = "qrcodes/livro_{$this->id}.png";
+        $path = "qrcodes/livro_{$this->id}.svg";
         Storage::disk('public')->put($path, $qrCode);
 
         $this->update(['qr_code' => $path]);
