@@ -15,6 +15,14 @@ use Filament\Notifications\Notification;
 
 class EmprestimoResource extends Resource
 {
+    public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+    {
+        $query = parent::getEloquentQuery();
+        if (auth()->user()?->hasRole('user')) {
+            $query->where('user_id', auth()->id());
+        }
+        return $query;
+    }
     protected static ?string $model = Emprestimo::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-book-open';

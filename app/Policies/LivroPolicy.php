@@ -12,7 +12,7 @@ class LivroPolicy
      */
     public function viewAny(User $user): bool
     {
-        return true;
+    return true; // Livros podem ser vistos por todos
     }
 
     /**

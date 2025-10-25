@@ -246,6 +246,33 @@ class LivroResource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\Action::make('reservar')
+                    ->label('Reservar')
+                    ->icon('heroicon-o-bookmark')
+                    ->visible(fn () => auth()->user()?->hasRole('user'))
+                    ->requiresConfirmation()
+                    ->action(function (Livro $record) {
+                        if ($record->quantidade_disponivel < 1) {
+                            \Filament\Notifications\Notification::make()
+                                ->title('Livro indisponível para reserva')
+                                ->danger()
+                                ->send();
+                            return;
+                        }
+                        $user = auth()->user();
+                        $reserva = \App\Models\Reserva::create([
+                            'user_id' => $user->id,
+                            'livro_id' => $record->id,
+                            'data_reserva' => now(),
+                            'data_expiracao' => now()->addDays(3),
+                            'status' => 'pendente',
+                        ]);
+                        \Filament\Notifications\Notification::make()
+                            ->title('Reserva criada com sucesso!')
+                            ->success()
+                            ->body('Sua reserva está pendente e expira em 3 dias.')
+                            ->send();
+                    }),
                 Tables\Actions\Action::make('qrcode')
                     ->label('QR Code')
                     ->icon('heroicon-o-qr-code')

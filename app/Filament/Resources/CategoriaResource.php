@@ -13,6 +13,30 @@ use Illuminate\Support\Str;
 
 class CategoriaResource extends Resource
 {
+    public static function shouldRegisterNavigation(): bool
+    {
+        return true;
+    }
+
+    public static function canViewAny(): bool
+    {
+        return true;
+    }
+
+    public static function canCreate(): bool
+    {
+        return auth()->user()?->hasRole('admin');
+    }
+
+    public static function canEdit(\Illuminate\Database\Eloquent\Model $record): bool
+    {
+        return auth()->user()?->hasRole('admin');
+    }
+
+    public static function canDelete(\Illuminate\Database\Eloquent\Model $record): bool
+    {
+        return auth()->user()?->hasRole('admin');
+    }
     protected static ?string $model = Categoria::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-tag';
@@ -93,8 +117,10 @@ class CategoriaResource extends Resource
                     ->falseLabel('Somente inativos'),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                ...auth()->user()?->hasRole('admin') ? [
+                    Tables\Actions\EditAction::make(),
+                    Tables\Actions\DeleteAction::make(),
+                ] : [],
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

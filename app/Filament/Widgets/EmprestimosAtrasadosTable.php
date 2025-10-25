@@ -9,6 +9,10 @@ use App\Models\Emprestimo;
 
 class EmprestimosAtrasadosTable extends BaseWidget
 {
+    public static function canView(): bool
+    {
+        return auth()->user()?->hasRole('admin');
+    }
     protected static ?int $sort = 4;
 
     protected int | string | array $columnSpan = 'full';

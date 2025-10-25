@@ -12,7 +12,7 @@ class EmprestimoPolicy
      */
     public function viewAny(User $user): bool
     {
-        return true;
+        return true; // Listagem permitida; filtragem ocorre no Resource
     }
 
     /**

@@ -14,6 +14,30 @@ use Spatie\Permission\Models\Role;
 
 class UserResource extends Resource
 {
+    public static function shouldRegisterNavigation(): bool
+    {
+        return auth()->user()?->hasRole('admin');
+    }
+
+    public static function canViewAny(): bool
+    {
+        return auth()->user()?->hasRole('admin');
+    }
+
+    public static function canCreate(): bool
+    {
+        return auth()->user()?->hasRole('admin');
+    }
+
+    public static function canEdit(\Illuminate\Database\Eloquent\Model $record): bool
+    {
+        return auth()->user()?->hasRole('admin');
+    }
+
+    public static function canDelete(\Illuminate\Database\Eloquent\Model $record): bool
+    {
+        return auth()->user()?->hasRole('admin');
+    }
     protected static ?string $model = User::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
