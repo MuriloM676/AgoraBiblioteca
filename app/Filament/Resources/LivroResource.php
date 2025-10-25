@@ -260,6 +260,18 @@ class LivroResource extends Resource
                             return;
                         }
                         $user = auth()->user();
+                        $jaExiste = \App\Models\Reserva::query()
+                            ->where('user_id', $user->id)
+                            ->where('livro_id', $record->id)
+                            ->whereIn('status', ['pendente', 'ativa', 'confirmada'])
+                            ->exists();
+                        if ($jaExiste) {
+                            \Filament\Notifications\Notification::make()
+                                ->title('Você já possui uma reserva ativa deste livro')
+                                ->danger()
+                                ->send();
+                            return;
+                        }
                         $reserva = \App\Models\Reserva::create([
                             'user_id' => $user->id,
                             'livro_id' => $record->id,
