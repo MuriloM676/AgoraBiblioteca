@@ -19,3 +19,16 @@ yarn-error.log
 /.nova
 /database/*.sqlite
 /database/*.sqlite-journal
+
+# Laravel runtime and build artifacts
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+/storage/logs/*
+
+# Keep the directories themselves
+!/storage/framework/.gitignore
+!/storage/framework/cache/.gitignore
+!/storage/framework/sessions/.gitignore
+!/storage/framework/views/.gitignore
+!/storage/logs/.gitignore
