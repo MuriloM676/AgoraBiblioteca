@@ -9,6 +9,7 @@ use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
+use Filament\Navigation\NavigationItem;
 use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -38,6 +39,18 @@ class AdminPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
+            ])
+            ->navigationItems([
+                NavigationItem::make('Minhas Reservas')
+                    ->group('Atalhos')
+                    ->icon('heroicon-o-bookmark')
+                    ->url('/admin/reservas')
+                    ->visible(fn (): bool => auth()->check() && auth()->user()->hasRole('user')),
+                NavigationItem::make('Meus Empréstimos')
+                    ->group('Atalhos')
+                    ->icon('heroicon-o-book-open')
+                    ->url('/admin/emprestimos')
+                    ->visible(fn (): bool => auth()->check() && auth()->user()->hasRole('user')),
             ])
             ->middleware([
                 EncryptCookies::class,

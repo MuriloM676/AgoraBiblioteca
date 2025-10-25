@@ -13,6 +13,27 @@ class StatsOverview extends BaseWidget
 {
     protected function getStats(): array
     {
+        $user = auth()->user();
+
+        if ($user && $user->hasRole('user')) {
+            $userId = $user->id;
+            return [
+                Stat::make('Meus Empréstimos Ativos', Emprestimo::where('user_id', $userId)->where('status', 'ativo')->count())
+                    ->description('Em circulação')
+                    ->descriptionIcon('heroicon-o-arrow-path')
+                    ->color('warning'),
+                Stat::make('Meus Empréstimos Atrasados', Emprestimo::where('user_id', $userId)->where('status', 'atrasado')->count())
+                    ->description('Atenção à devolução')
+                    ->descriptionIcon('heroicon-o-exclamation-triangle')
+                    ->color('danger'),
+                Stat::make('Minhas Reservas Pendentes', Reserva::where('user_id', $userId)->where('status', 'pendente')->count())
+                    ->description('Aguardando confirmação')
+                    ->descriptionIcon('heroicon-o-bookmark')
+                    ->color('info'),
+            ];
+        }
+
+        // Admin / demais perfis: visão geral
         $stats = [
             Stat::make('Total de Livros', Livro::count())
                 ->description('Livros cadastrados')
@@ -33,19 +54,17 @@ class StatsOverview extends BaseWidget
                 ->color('success')
                 ->chart([20, 25, 30, 35, 40, 45, User::where('is_active', true)->count()]),
         ];
-        if (auth()->user()?->hasRole('admin')) {
-            array_splice($stats, 2, 0, [
-                Stat::make('Empréstimos Ativos', Emprestimo::where('status', 'ativo')->count())
-                    ->description('Em circulação')
-                    ->descriptionIcon('heroicon-o-arrow-path')
-                    ->color('warning')
-                    ->chart([5, 10, 15, 12, 8, 10, Emprestimo::where('status', 'ativo')->count()]),
-                Stat::make('Empréstimos Atrasados', Emprestimo::atrasado()->count())
-                    ->description('Devoluções pendentes')
-                    ->descriptionIcon('heroicon-o-exclamation-triangle')
-                    ->color('danger'),
-            ]);
-        }
+        array_splice($stats, 2, 0, [
+            Stat::make('Empréstimos Ativos', Emprestimo::where('status', 'ativo')->count())
+                ->description('Em circulação')
+                ->descriptionIcon('heroicon-o-arrow-path')
+                ->color('warning')
+                ->chart([5, 10, 15, 12, 8, 10, Emprestimo::where('status', 'ativo')->count()]),
+            Stat::make('Empréstimos Atrasados', Emprestimo::atrasado()->count())
+                ->description('Devoluções pendentes')
+                ->descriptionIcon('heroicon-o-exclamation-triangle')
+                ->color('danger'),
+        ]);
         return $stats;
     }
 }
